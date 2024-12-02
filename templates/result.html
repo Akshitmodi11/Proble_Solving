@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification Results</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 30px;
+            color: #844c;
+            font-size: 28px;
+            text-shadow: 1px 1px 2px #aaa;
+        }
+
+        .results-container {
+            margin: 20px auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 16px;
+        }
+
+        li:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .probability {
+            color: #844c;
+        }
+
+        .actions {
+            margin-top: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #844c;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .button:hover {
+            background-color: #844c;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <h1>Classification Results</h1>
+    <div class="results-container">
+        <ul id="resultsList">
+            {% for label, prob in predictions.items() %}
+                <li>
+                    <span class="label">{{ label }}</span>
+                    <span class="probability">{{ prob * 100 }}%</span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="actions">
+        <button class="button" onclick="downloadReport()">Download Report</button>
+        <a href="/" class="button">Upload Another Image</a>
+    </div>
+
+    <script>
+        function downloadReport() {
+            const results = Array.from(document.querySelectorAll('#resultsList li'));
+            let reportText = 'Classification Report\n\n';
+            let highestClass = '';
+            let highestProbability = 0;
+
+            results.forEach(result => {
+                const label = result.querySelector('.label').textContent;
+                const probability = parseFloat(result.querySelector('.probability').textContent);
+                reportText += `${label}: ${probability}%\n`;
+
+                // Determine the highest probability class
+                if (probability > highestProbability) {
+                    highestProbability = probability;
+                    highestClass = label;
+                }
+            });
+
+            reportText += `\n\nThe highest probability class is "${highestClass}" with a probability of ${highestProbability}%.`;
+            reportText += '\n\nPlease consult a doctor for a detailed diagnosis.';
+
+            // Generate PDF using jsPDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.text(reportText, 10, 10);
+            doc.save('Classification_Report.pdf');
+        }
+    </script>
+</body>
+</html>

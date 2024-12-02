@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Powered Chest X-ray Diagnosis Tools</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #e3844c;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        main {
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-top: 20px;
+            font-size: 22px;
+            color: #333;
+        }
+
+        #upload-area {
+            margin: 20px auto;
+            padding: 20px;
+            width: 50%;
+            max-width: 400px;
+            border: 2px dashed #007bff;
+            border-radius: 10px;
+            background-color: #fff;
+            cursor: pointer;
+            text-align: center;
+            position: relative;
+        }
+
+        #upload-area p {
+            color: #666;
+            margin: 0;
+        }
+
+        #upload-area input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        #upload-area.dragover {
+            background-color: #e9f7ff;
+        }
+
+        #upload-area:hover {
+            background-color: #f4faff;
+        }
+
+        #imagePreview {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+            width: 50%;
+            max-width: 400px;
+            height: 300px; /* Fixed height for consistent layout */
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden; /* Ensures the image doesn't overflow */
+        }
+
+        #uploadedImage {
+            max-width: 100%;
+            max-height: 100%;
+            display: none; /* Initially hidden */
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #844c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            background-color: #844c;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>BMI 540 Problem Solving</h1>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <h1>AI Powered Chest X-ray Diagnosis Tools</h1>
+        <form action="/classify" method="post" enctype="multipart/form-data">
+            <!-- Drag-and-Drop Upload Area -->
+            <div id="upload-area" 
+                 ondragover="highlight(event)" 
+                 ondragleave="unhighlight(event)" 
+                 ondrop="handleDrop(event)">
+                <p>Drag and drop your X-ray image here, or click to choose a file</p>
+                <input type="file" id="file" name="file" accept="image/*" onchange="handleFileSelect(event)" required>
+            </div>
+            
+            <!-- Image Preview -->
+            <div id="imagePreview">
+                <img id="uploadedImage" src="" alt="Image Preview">
+            </div>
+            
+            <!-- Submit Button -->
+            <button type="submit">Classify Image</button>
+        </form>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>Developed by Akshit & Prathyusha</p>
+    </footer>
+
+    <script>
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function highlight(e) {
+            preventDefaults(e);
+            const uploadArea = document.getElementById('upload-area');
+            uploadArea.classList.add('dragover');
+        }
+
+        function unhighlight(e) {
+            preventDefaults(e);
+            const uploadArea = document.getElementById('upload-area');
+            uploadArea.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            preventDefaults(e);
+            const files = e.dataTransfer.files;
+            if (files && files[0]) {
+                const fileInput = document.getElementById('file');
+                fileInput.files = e.dataTransfer.files;
+                previewImage(fileInput.files[0]);
+            }
+        }
+
+        function previewImage(file) {
+            const preview = document.getElementById('uploadedImage');
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block'; // Show the preview
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function handleFileSelect(event) {
+            const fileInput = event.target;
+            previewImage(fileInput.files[0]);
+        }
+    </script>
+</body>
+</html>
